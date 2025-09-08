@@ -50,7 +50,10 @@ const BooksTable = () => {
         toast.success(data.message);
       },
       onError: (error) => {
-        toast.error(error?.response?.data?.message || "Already Requested Please wait for admin approvel");
+        toast.error(
+          error?.response?.data?.message ||
+            "Already Requested Please wait for admin approvel"
+        );
       },
     });
   };
@@ -80,7 +83,7 @@ const BooksTable = () => {
             </button>
           ) : (
             <button
-              onClick={""}
+              onClick={() => toast.success("Request Send!")}
               className="py-1 px-4 bg-blue-500 text-white rounded"
             >
               Request Admin to Add Book

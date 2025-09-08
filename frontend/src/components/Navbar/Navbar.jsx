@@ -9,13 +9,12 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate("/logIn");
+    navigate("/signIn");
     setIsOpen(false);
   };
 
   // Common link classes
-  const baseLinkClasses =
-    "px-3 py-2 rounded-md text-sm font-medium transition";
+  const baseLinkClasses = "px-3 py-2 rounded-md text-sm font-medium transition";
 
   // Active & inactive classes
   const activeLinkClasses = "bg-blue-600 text-white";
@@ -77,7 +76,7 @@ const Navbar = () => {
                     </NavLink>
                   </>
                 )}
-                
+
                 <button
                   onClick={handleLogout}
                   className="ml-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition"

@@ -13,6 +13,12 @@ const Books = () => {
     returnBook(borrowId, {
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: ["books"] });
+        queryClient.invalidateQueries({
+          queryKey: ["books", "all-borrow-book-requests"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["books", "all-borrow-books"],
+        });
         toast.success(data.message || "Book added successfully!");
       },
       onError: (error) => {
