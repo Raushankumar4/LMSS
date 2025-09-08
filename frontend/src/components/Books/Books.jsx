@@ -77,7 +77,7 @@ const Books = () => {
                   <td className="p-3 text-center">
                     {!returnDate ? (
                       <button
-                        onClick={() => handleReturn(_id)}
+                        onClick={() => handleReturn(bookId)}
                         className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition disabled:opacity-50"
                       >
                         Return
