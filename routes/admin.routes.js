@@ -13,12 +13,10 @@ const isAdmin = require("../middlewares/isAdmin");
 const router = Router();
 
 router.route("/add-book").post(isAuthenticated, isAdmin, AddBook);
-router.put("/books/:id").put(isAuthenticated, isAdmin, UpdateBook);
+router.route("/books/:id").put(isAuthenticated, isAdmin, UpdateBook);
 router.route("/books/:id").delete(isAuthenticated, isAdmin, DeleteBook);
 router.route("/books").get(isAuthenticated, getBooks);
 router.route("/borrow-requests").get(isAuthenticated, getAllBorrowRequests);
-router
-  .route("/borrow-requests/:id/approve")
-  .put(isAuthenticated, isAdmin, approveBorrowRequest);
+router.route("/borrow-requests/:id/approve").put(isAuthenticated, isAdmin, approveBorrowRequest);
 
 module.exports = router;

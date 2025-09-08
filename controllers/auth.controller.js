@@ -90,7 +90,7 @@ const login = asyncHandler(async (req, res) => {
       .json({ success: false, message: "Role is required" });
   }
 
-  const existUser = await userModel.findOne({ email: email.toLowerCase() });
+  const existUser = await userModel.findOne({ email });
 
   if (!existUser) {
     return res.status(404).json({
