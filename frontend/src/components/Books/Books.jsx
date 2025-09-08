@@ -10,7 +10,7 @@ const Books = () => {
   const queryClient = useQueryClient();
 
   const handleReturn = (borrowId) => {
-    returnBook(borrowId, {
+    returnBook({bookId:borrowId}, {
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: ["books"] });
         queryClient.invalidateQueries({
@@ -19,10 +19,10 @@ const Books = () => {
         queryClient.invalidateQueries({
           queryKey: ["books", "all-borrow-books"],
         });
-        toast.success(data.message || "Book added successfully!");
+        toast.success(data.message || "Book Return successfully!");
       },
       onError: (error) => {
-        toast.error(error?.response?.data?.message || "Creation failed");
+        toast.error(error?.response?.data?.message || "failed to return book");
       },
     });
   };
