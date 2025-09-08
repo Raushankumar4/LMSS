@@ -70,8 +70,8 @@ const BorrowRequests = () => {
                       {request.status !== "approved" && (
                         <button
                           onClick={() => {
-                            // 🔧 Your logic to approve here
-                            approveBorrowRequest(request?._id, {
+            
+                            approveBorrowRequest({borrowRequestId:request?._id}, {
                               onSuccess: (data) => {
                                 queryClient.invalidateQueries({
                                   queryKey: ["books"],
