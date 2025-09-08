@@ -1,9 +1,11 @@
-import React from 'react'
+import BooksTable from "../Books/BooksTable";
 
 const Admin = () => {
   return (
-    <div>Admin</div>
-  )
-}
+    <div>
+      <BooksTable />
+    </div>
+  );
+};
 
-export default Admin
+export default Admin;
