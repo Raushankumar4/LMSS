@@ -1,12 +1,21 @@
-
-import { useGetAllBorrowRequestsBooks } from "../../hooks/useAdmin";
+import { useQueryClient } from "@tanstack/react-query";
+import {
+  useApproveBorrowRequest,
+  useGetAllBorrowRequestsBooks,
+} from "../../hooks/useAdmin";
+import toast from "react-hot-toast";
 
 const BorrowRequests = () => {
   const { data, isLoading, isError } = useGetAllBorrowRequestsBooks();
   const requests = data?.requests || [];
+  const { mutate: approveBorrowRequest } = useApproveBorrowRequest();
+  const queryClient = useQueryClient();
 
   if (isLoading) return <div className="p-4">Loading borrow requests...</div>;
-  if (isError) return <div className="p-4 text-red-500">Failed to load borrow requests.</div>;
+  if (isError)
+    return (
+      <div className="p-4 text-red-500">Failed to load borrow requests.</div>
+    );
 
   return (
     <div className="p-6 min-h-screen shadow-lg rounded-lg">
@@ -34,9 +43,15 @@ const BorrowRequests = () => {
                   <td className="px-4 py-3 font-mono text-xs text-gray-600">
                     {request._id.slice(0, 6).toUpperCase()}
                   </td>
-                  <td className="px-4 py-3">{request.userId?.username || "N/A"}</td>
-                  <td className="px-4 py-3">{request.userId?.email || "N/A"}</td>
-                  <td className="px-4 py-3">{request.bookId?.title || "N/A"}</td>
+                  <td className="px-4 py-3">
+                    {request.userId?.username || "N/A"}
+                  </td>
+                  <td className="px-4 py-3">
+                    {request.userId?.email || "N/A"}
+                  </td>
+                  <td className="px-4 py-3">
+                    {request.bookId?.title || "N/A"}
+                  </td>
                   <td className="px-4 py-3">{request.bookId?.isbn || "N/A"}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
@@ -56,7 +71,20 @@ const BorrowRequests = () => {
                         <button
                           onClick={() => {
                             // 🔧 Your logic to approve here
-                            console.log("Approving request:", request._id);
+                            approveBorrowRequest(request?._id, {
+                              onSuccess: (data) => {
+                                queryClient.invalidateQueries({
+                                  queryKey: ["books"],
+                                });
+                                queryClient.invalidateQueries({
+                                  queryKey: ["books", "BorrowRequestsBooks"],
+                                });
+                                toast.success("Approved");
+                              },
+                              onError: () => {
+                                toast.error("Something went wrong!");
+                              },
+                            });
                           }}
                           className="text-xs text-blue-600 border border-blue-600 px-2 py-0.5 rounded hover:bg-blue-50 transition"
                         >
