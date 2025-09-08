@@ -3,11 +3,6 @@ const connectDB = require("./db/db");
 
 const PORT = process.env.PORT || 4000;
 
-// Routes
-app.get("/", (req, res) => {
-  res.send("Server is Running !");
-});
-
 // Start server after DB connection
 connectDB()
   .then(() => {
