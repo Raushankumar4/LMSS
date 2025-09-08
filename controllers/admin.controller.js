@@ -170,7 +170,9 @@ const getAllBorrowRequests = asyncHandler(async (req, res) => {
 });
 
 const getBooks = asyncHandler(async (req, res) => {
-  const books = await Book.find().populate("author", "username");
+  const books = await Book.find()
+    .populate("author", "username")
+    .sort({ createdAt: -1 });
   return res.status(200).json({ message: "All Books", books });
 });
 

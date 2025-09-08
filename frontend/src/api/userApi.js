@@ -17,6 +17,6 @@ export const userApi = {
   },
   returnBooks: async (bookId) => {
     const { data } = await axiosInstance.post(`/user/books/${bookId}/return`);
-    return data
+    return data;
   },
 };

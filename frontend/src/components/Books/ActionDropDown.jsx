@@ -1,9 +1,16 @@
 import { useState } from "react";
-import { Eye, Pencil, Trash2, MoreHorizontal } from "lucide-react";
+import {
+  Eye,
+  Pencil,
+  Trash2,
+  MoreHorizontal,
+  BookOpenCheck,
+} from "lucide-react";
 
-const ActionDropdown = ({ onView, onEdit, onDelete }) => {
+
+const ActionDropdown = ({ onView, onEdit, onDelete, onBorrow }) => {
   const [open, setOpen] = useState(false);
-
+  
   return (
     <div className="relative inline-block text-left">
       <button
@@ -14,7 +21,7 @@ const ActionDropdown = ({ onView, onEdit, onDelete }) => {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg border z-20">
+        <div className="absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg border z-20">
           {onView && (
             <button
               onClick={() => {
@@ -27,6 +34,7 @@ const ActionDropdown = ({ onView, onEdit, onDelete }) => {
               View
             </button>
           )}
+
           {onEdit && (
             <button
               onClick={() => {
@@ -39,6 +47,20 @@ const ActionDropdown = ({ onView, onEdit, onDelete }) => {
               Edit
             </button>
           )}
+
+          {onBorrow && (
+            <button
+              onClick={() => {
+                onBorrow();
+                setOpen(false);
+              }}
+              className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 w-full"
+            >
+              <BookOpenCheck className="w-4 h-4" />
+              Borrow
+            </button>
+          )}
+
           {onDelete && (
             <button
               onClick={() => {

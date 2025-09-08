@@ -3,23 +3,56 @@ import { toast } from "react-hot-toast";
 import { useGetAllBooks } from "../../hooks/useBooks";
 import ActionDropdown from "./ActionDropDown";
 import { useAuth } from "../../context/AuthContex";
+import AddBook from "../Admin/AddBook";
+import { useDeleteBook } from "../../hooks/useAdmin";
+import { useQueryClient } from "@tanstack/react-query";
+import UpdateBook from "../Admin/UpdateBook";
+import ViewBook from "./ViewBook";
+import { useBorrowBookRequest } from "../../hooks/useUser";
 
 const BooksTable = () => {
   const { data: allBooks, isLoading, isError } = useGetAllBooks();
+  const { mutate: deleteBook } = useDeleteBook();
   const [searchTerm, setSearchTerm] = useState("");
   const { user } = useAuth();
-  console.log(user?.id);
+  const [isUpdateModelOpen, setIsUpdateModelOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSelectToUpdate, setIsSelectToUpdate] = useState(null);
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const { mutate: borrowBook } = useBorrowBookRequest();
 
   const handleDelete = (id) => {
-    toast.success(`Deleted book with ID: ${id}`);
+    deleteBook(id, {
+      onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey: ["books"] });
+        toast.success(data?.message || "Book Deleted");
+        reset();
+        onClose();
+      },
+    });
   };
 
-  const handleEdit = (id) => {
-    toast.info(`Edit book with ID: ${id}`);
+  const handleEdit = (book) => {
+    setIsSelectToUpdate(book);
+    setIsModalOpen(true);
   };
 
-  const handleView = (id) => {
-    toast(`Viewing book with ID: ${id}`);
+  const handleView = (book) => {
+    setSelectedBook(book);
+    setIsViewModalOpen(true);
+  };
+
+  const handleBorrow = (id) => {
+    borrowBook(id, {
+      onSuccess: (data) => {
+        toast.success(data.message);
+      },
+      onError: (error) => {
+        toast.error(error?.response?.data?.message || "Already Requested Please wait for admin approvel");
+      },
+    });
   };
 
   if (isLoading) return <div>Loading books...</div>;
@@ -37,13 +70,30 @@ const BooksTable = () => {
     <div className="bg-white p-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-4">
         <h2 className="text-lg font-semibold">Books List</h2>
-        <input
-          type="text"
-          placeholder="Search by title or author..."
-          className="w-full sm:w-64 px-3 py-2 border rounded-md text-sm"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+        <div className="space-x-4">
+          {user?.role === "Admin" ? (
+            <button
+              onClick={() => setIsUpdateModelOpen(true)}
+              className="py-1 px-4 bg-blue-500 text-white rounded"
+            >
+              + Add Book
+            </button>
+          ) : (
+            <button
+              onClick={""}
+              className="py-1 px-4 bg-blue-500 text-white rounded"
+            >
+              Request Admin to Add Book
+            </button>
+          )}
+          <input
+            type="text"
+            placeholder="Search by title or author..."
+            className="w-full sm:w-64 px-3 py-2 border rounded-md text-sm"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       </div>
 
       <div className="h-screen overflow-auto">
@@ -83,15 +133,21 @@ const BooksTable = () => {
                 </td>
                 <td className="p-3 text-center">
                   <ActionDropdown
-                    onView={() => handleView(book?._id)}
+                    onView={() => handleView(book)}
                     onEdit={
                       user?.id === book.author?._id
-                        ? () => handleEdit(book._id)
+                        ? () => handleEdit(book)
                         : undefined
                     }
                     onDelete={
                       user?.id === book.author?._id
                         ? () => handleDelete(book._id)
+                        : undefined
+                    }
+                    onBorrow={
+                      user?.id !== book.author?._id &&
+                      book.availabilityStatus === "available"
+                        ? () => handleBorrow(book._id)
                         : undefined
                     }
                   />
@@ -109,6 +165,27 @@ const BooksTable = () => {
           </tbody>
         </table>
       </div>
+      {isUpdateModelOpen && (
+        <AddBook onClose={() => setIsUpdateModelOpen(false)} />
+      )}
+      {isModalOpen && isSelectToUpdate && (
+        <UpdateBook
+          book={isSelectToUpdate}
+          onClose={() => {
+            setIsModalOpen(false);
+            setIsSelectToUpdate(null);
+          }}
+        />
+      )}
+      {isViewModalOpen && selectedBook && (
+        <ViewBook
+          book={selectedBook}
+          onClose={() => {
+            setIsViewModalOpen(false);
+            setSelectedBook(null);
+          }}
+        />
+      )}
     </div>
   );
 };
