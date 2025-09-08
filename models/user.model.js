@@ -21,6 +21,14 @@ const UserSchema = new mongoose.Schema(
       enum: ["Admin", "Member"],
       default: "Member",
     },
+    borrowedBooks: [
+      {
+        bookId: { type: mongoose.Schema.Types.ObjectId, ref: "Book" },
+        borrowDate: Date,
+        dueDate: Date,
+        returnDate: Date,
+      },
+    ],
   },
   { timestamps: true }
 );
