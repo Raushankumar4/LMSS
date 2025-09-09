@@ -11,7 +11,6 @@ const BorrowRequests = () => {
   const { mutate: approveBorrowRequest } = useApproveBorrowRequest();
   const queryClient = useQueryClient();
   console.log(requests);
-  
 
   if (isLoading) return <div className="p-4">Loading borrow requests...</div>;
   if (isError)
@@ -69,11 +68,10 @@ const BorrowRequests = () => {
                         {request.status}
                       </span>
 
-                      {request.status !== "approved" && (
+                      {request?.status !== "approved" && (
                         <button
                           onClick={() => {
-            
-                            approveBorrowRequest({borrowRequestId:request?._id}, {
+                            approveBorrowRequest(request?._id, {
                               onSuccess: (data) => {
                                 queryClient.invalidateQueries({
                                   queryKey: ["books"],
