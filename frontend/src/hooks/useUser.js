@@ -25,6 +25,6 @@ export const useGetAllBorrowBooks = () => {
 export const useReturnBook = () => {
   return useMutation({
     mutationKey: ["books", "return-books"],
-    mutationFn: userApi.returnBooks,
+    mutationFn:({bookId})=> userApi.returnBooks(bookId),
   });
 };
