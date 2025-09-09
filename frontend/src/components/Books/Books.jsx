@@ -8,6 +8,7 @@ const Books = () => {
   const borrowedBooks = data?.borrowedBooks || [];
   const { mutate: returnBook } = useReturnBook();
   const queryClient = useQueryClient();
+  console.log(borrowedBooks);
 
   const handleReturn = (borrowId) => {
     returnBook(borrowId, {
@@ -19,10 +20,12 @@ const Books = () => {
         queryClient.invalidateQueries({
           queryKey: ["books", "all-borrow-books"],
         });
-        toast.success(data.message || "Book added successfully!");
+        toast.success(data.message || "Book Return");
       },
       onError: (error) => {
-        toast.error(error?.response?.data?.message || "Creation failed");
+        console.log(borrowId);
+
+        toast.error(error?.response?.data?.message || "Return failed");
       },
     });
   };
@@ -55,42 +58,40 @@ const Books = () => {
           </thead>
 
           <tbody className="text-gray-800">
-            {borrowedBooks.map(
-              ({ _id, bookId, borrowDate, dueDate, returnDate }) => (
-                <tr
-                  key={_id}
-                  className="hover:bg-gray-50 transition-all border-b border-gray-100"
-                >
-                  <td className="p-3">{bookId?.title || "N/A"}</td>
-                  <td className="p-3">{bookId?.isbn || "N/A"}</td>
-                  <td className="p-3">
-                    {new Date(borrowDate).toLocaleDateString()}
-                  </td>
-                  <td className="p-3">
-                    {new Date(dueDate).toLocaleDateString()}
-                  </td>
-                  <td className="p-3">
-                    {returnDate
-                      ? new Date(returnDate).toLocaleDateString()
-                      : "Not returned"}
-                  </td>
-                  <td className="p-3 text-center">
-                    {!returnDate ? (
-                      <button
-                        onClick={() => handleReturn(_id)}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition disabled:opacity-50"
-                      >
-                        Return
-                      </button>
-                    ) : (
-                      <span className="text-green-600 font-semibold">
-                        Returned
-                      </span>
-                    )}
-                  </td>
-                </tr>
-              )
-            )}
+            {borrowedBooks.map((book) => (
+              <tr
+                key={book?._id}
+                className="hover:bg-gray-50 transition-all border-b border-gray-100"
+              >
+                <td className="p-3">{book?.bookId?.title || "N/A"}</td>
+                <td className="p-3">{book?.bookId?.isbn || "N/A"}</td>
+                <td className="p-3">
+                  {new Date(book?.borrowDate).toLocaleDateString()}
+                </td>
+                <td className="p-3">
+                  {new Date(book?.dueDate).toLocaleDateString()}
+                </td>
+                <td className="p-3">
+                  {book?.returnDate
+                    ? new Date(book?.returnDate).toLocaleDateString()
+                    : "Not returned"}
+                </td>
+                <td className="p-3 text-center">
+                  {!book?.returnDate ? (
+                    <button
+                      onClick={() => handleReturn(book?.bookId?._id)}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition disabled:opacity-50"
+                    >
+                      Return
+                    </button>
+                  ) : (
+                    <span className="text-green-600 font-semibold">
+                      Returned
+                    </span>
+                  )}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

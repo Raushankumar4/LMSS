@@ -30,7 +30,6 @@ export const useGetAllBorrowRequestsBooks = () => {
 export const useApproveBorrowRequest = () => {
   return useMutation({
     mutationKey: ["books", "approve"],
-    mutationFn: ({ borrowRequestId }) =>
-      adminAPi.approveBorrowRequestedBook(borrowRequestId),
+    mutationFn: adminAPi.approveBorrowRequestedBook,
   });
 };

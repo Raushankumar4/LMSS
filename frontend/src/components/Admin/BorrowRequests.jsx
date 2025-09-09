@@ -10,6 +10,8 @@ const BorrowRequests = () => {
   const requests = data?.requests || [];
   const { mutate: approveBorrowRequest } = useApproveBorrowRequest();
   const queryClient = useQueryClient();
+  console.log(requests);
+  
 
   if (isLoading) return <div className="p-4">Loading borrow requests...</div>;
   if (isError)
